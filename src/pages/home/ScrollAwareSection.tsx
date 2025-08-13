@@ -375,7 +375,7 @@ const Wheel = ({ activeId }: { activeId: string }) => {
   const spikeCount = total * 4;
   const radius =180;
   const centerX = 200;
-  const centerY = 240;
+  const centerY = 250;
   const labelRadius = radius + 10;
 
   const activeIndex = SliderList.findIndex(
