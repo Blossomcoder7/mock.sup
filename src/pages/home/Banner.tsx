@@ -116,7 +116,7 @@ const Banner = () => {
         </div>
         {/* <div className="w-full h-2/3 absolute z-2 bottom-0 left-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent"></div> */}
       </div>
-      <div className="absolute left-0 bottom-0 z-20 w-full h-1 ">
+      <div className="absolute left-0 sm:block bottom-0 z-20 w-full h-1 ">
         {scrollYProgress <= 0.99 && (
           <motion.div
             style={{ scaleX: springX }}
