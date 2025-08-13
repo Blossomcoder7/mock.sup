@@ -373,9 +373,9 @@ export default ScrollAwareSection;
 const Wheel = ({ activeId }: { activeId: string }) => {
   const total = SliderList.length;
   const spikeCount = total * 4;
-  const radius =150;
+  const radius =180;
   const centerX = 200;
-  const centerY = 200;
+  const centerY = 240;
   const labelRadius = radius + 10;
 
   const activeIndex = SliderList.findIndex(
