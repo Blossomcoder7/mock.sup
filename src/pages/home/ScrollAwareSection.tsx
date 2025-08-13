@@ -290,7 +290,7 @@ const ScrollAwareSection = () => {
                 </div>
               </div>
               {/* left side meter el  */}
-              <div className="w-sm h-72 md:h-42 -rotate-90 md:rotate-0 absolute z-3 left-1/2 md:left-0 top-0 md:top-1/2 -translate-x-1/2 md:translate-x-0 md:-translate-y-1/2  overflow-hidden  ">
+              <div className="w-sm h-72 md:h-42 hidden md:block absolute z-3 left-1/2 md:left-0 top-0 md:top-1/2 -translate-x-1/2 md:translate-x-0 md:-translate-y-1/2  overflow-hidden  ">
                 {/* grads  */}
                 <div className="absolute  hidden md:block inset-x-0 top-0 left-0 w-full h-1/3 z-4 pointer-events-auto bg-gradient-to-b from-white to-transparent"></div>
                 <div className="absolute hidden md:block  inset-x-0 bottom-0 left-0 w-full h-1/3 z-4 pointer-events-auto bg-gradient-to-t from-white to-transparent"></div>
