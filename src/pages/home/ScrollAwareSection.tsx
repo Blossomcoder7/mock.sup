@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -39,7 +39,7 @@ const ScrollAwareSection = () => {
     [0, -(itemHeight * (listLength - 1))]
   );
 
-  const generateSpeedometerElements = () => {
+  const generateSpeedometerElements = useCallback(() => {
     const elements = [];
     const totalDashes = 100;
     const totalDots = 110;
@@ -89,7 +89,7 @@ const ScrollAwareSection = () => {
     }
 
     return elements;
-  };
+  }, []);
 
   useGSAP(
     () => {
