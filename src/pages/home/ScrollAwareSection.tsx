@@ -187,30 +187,38 @@ const ScrollAwareSection = () => {
     const handleScroll = () => {
       if (!listRef.current || !containerRef.current) return;
       const items = Array.from(listRef.current.children) as HTMLElement[];
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const containerCenterY = containerRect.top + containerRect.height / 2;
-      let closestItem: HTMLElement | null = null;
-      let closestDistance = Infinity;
 
-      items.forEach((item) => {
-        const itemRect = item.getBoundingClientRect();
-        const itemCenterY = itemRect.top + itemRect.height / 2;
-        const distance = Math.abs(containerCenterY - itemCenterY);
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestItem = item;
+      // Use rotation-aware or fallback
+      if (window.innerWidth >= 768) {
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const containerCenterY = containerRect.top + containerRect.height / 2;
+        let closestItem: HTMLElement | null = null;
+        let closestDistance = Infinity;
+
+        items.forEach((item) => {
+          const itemRect = item.getBoundingClientRect();
+          const itemCenterY = itemRect.top + itemRect.height / 2;
+          const distance = Math.abs(containerCenterY - itemCenterY);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestItem = item;
+          }
+        });
+
+        if (closestItem) {
+          const id = (closestItem as HTMLDivElement).getAttribute("data-id");
+          if (id) setActiveId(id);
         }
-      });
-
-      if (closestItem) {
-        const id = (closestItem as HTMLDivElement).getAttribute("data-id");
-        if (id) setActiveId(id);
+      } else {
+        // For small screens, use scrollTop / simple index
+        const progress = motionProg.get(); // already 0-1
+        const index = Math.round(progress * (SliderList.length - 1));
+        setActiveId(String(SliderList[index].id));
       }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -220,7 +228,7 @@ const ScrollAwareSection = () => {
     <>
       <div
         ref={pinEl}
-        className="w-full min-h-fit h-screen bg-white flex items-start relative justify-center py-9 mt-3"
+        className="w-full min-h-fit h-screen bg-white flex items-start relative justify-center sm:py-9 mt-3"
       >
         <XSpacing>
           <div className="w-full h-screen min-h-fit bg-white flex relative items-center justify-center">
@@ -236,7 +244,7 @@ const ScrollAwareSection = () => {
                 {generateSpeedometerElements()}
               </svg>
               {/* center text  */}
-              <div className=" absolute top-[40%] left-1/2 inset-0 -translate-1/2 flex flex-col items-center justify-center z-3">
+              <div className=" absolute top-[45%] sm:top-[40%] left-1/2 inset-0 -translate-1/2 flex flex-col items-center justify-center z-3">
                 <p className="text-black font-normal text-[2rem] lg:text-[4rem] text-center leading-tight tracking-tight">
                   It starts with <br />
                   100+ labs
@@ -282,33 +290,67 @@ const ScrollAwareSection = () => {
                 </div>
               </div>
               {/* left side meter el  */}
-              <div className="w-sm h-42 absolute z-3 left-0 top-1/2 -translate-y-1/2  overflow-hidden hidden lg:block  ">
+              <div className="w-sm h-72 md:h-42 -rotate-90 md:rotate-0 absolute z-3 left-1/2 md:left-0 top-0 md:top-1/2 -translate-x-1/2 md:translate-x-0 md:-translate-y-1/2  overflow-hidden  ">
                 {/* grads  */}
-                <div className="absolute inset-x-0 top-0 left-0 w-full h-1/3 z-4 pointer-events-auto bg-gradient-to-b from-white to-transparent"></div>
-                <div className="absolute inset-x-0 bottom-0 left-0 w-full h-1/3 z-4 pointer-events-auto bg-gradient-to-t from-white to-transparent"></div>
+                <div className="absolute  hidden md:block inset-x-0 top-0 left-0 w-full h-1/3 z-4 pointer-events-auto bg-gradient-to-b from-white to-transparent"></div>
+                <div className="absolute hidden md:block  inset-x-0 bottom-0 left-0 w-full h-1/3 z-4 pointer-events-auto bg-gradient-to-t from-white to-transparent"></div>
                 {/* content  */}
                 <div
                   ref={containerRef}
+                  style={{ perspective: 800 }}
                   className="w-full  flex  h-12  absolute left-0 top-1/2 -translate-y-1/2 px-4"
                 >
-                  <div className="absolute ps-4 left-0 top-1/2 -translate-y-1/2">
-                    <RightArrow />
+                  <div className="absolute  ps-4 left-0 top-1/2 -translate-y-1/2">
+                    <span className="hidden md:block ">
+                      <RightArrow />
+                    </span>
                   </div>
                   <motion.div
-                    style={{ y: translateY }}
+                    style={{
+                      y: translateY,
+                      transformStyle: "preserve-3d", // allow 3D transforms on children
+                    }}
                     ref={listRef}
                     className="flex flex-col w-full  items-center h-auto text-black"
                   >
                     {SliderList.map((a, i) => {
+                      const total = SliderList.length;
+                      const isMobile =
+                        typeof window !== "undefined" &&
+                        window.innerWidth < 768;
+
+                      // Arc angles
+                      const angle = isMobile
+                        ? (i / (total - 1)) * 180 - 60 // -60° to 60° arc on mobile
+                        : (i / (total - 1)) * 60 - 30; // -30° to 30° arc on desktop
+
                       return (
                         <motion.div
                           key={`sliding-list-item-${i}`}
                           data-id={a.id}
                           className={clsx(
-                            "w-full h-12 flex justify-start gap-3 items-center"
+                            "w-full h-12 flex justify-start gap-3 items-center",
+                            window.innerWidth > 768
+                              ? "opacity-100"
+                              : activeId === String(a.id)
+                              ? "opacity-100"
+                              : "opacity-40"
                           )}
+                          style={{
+                            transform: isMobile
+                              ? `rotate(${angle}deg) translate(100px)`
+                              : `rotateX(${angle}deg) translateZ(50px)`,
+                            transformOrigin: isMobile
+                              ? "bottom center"
+                              : "center center",
+                          }}
                           animate={{
-                            paddingLeft: activeId === String(a.id) ? 20 : 60,
+                            paddingLeft:
+                              window.innerWidth < 768
+                                ? 0
+                                : activeId === String(a.id)
+                                ? 20
+                                : 60,
                           }}
                           transition={{
                             type: "spring",
@@ -321,7 +363,7 @@ const ScrollAwareSection = () => {
                               <img
                                 src={a?.image}
                                 alt="image"
-                                className="object-cover object-center h-full w-full "
+                                className="object-cover object-center h-full w-full hidden sm:block "
                               />
                             </div>
                             <span className="">{a?.title}</span>
