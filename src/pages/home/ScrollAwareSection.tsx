@@ -95,7 +95,7 @@ const ScrollAwareSection = () => {
       if (!pinEl?.current || !speedometerRef?.current) {
         return;
       } else {
-        // Pin the section
+      
         ScrollTrigger.create({
           trigger: pinEl.current,
           //   markers: true,
@@ -115,13 +115,13 @@ const ScrollAwareSection = () => {
             },
           });
 
-          // Animate each dash sequentially
+
           dashes.forEach((dash: any, index: any) => {
             const progress = index / (dashes.length - 1);
             dashTimeline.to(
               dash,
               {
-                fill: "#fc5f2b", // Orange color
+                fill: "#fc5f2b", 
                 duration: 0.1,
                 ease: "none",
               },
@@ -129,7 +129,7 @@ const ScrollAwareSection = () => {
             );
           });
 
-          // Create timeline for dot animation
+      
           const dotTimeline = gsap.timeline({
             scrollTrigger: {
               trigger: pinEl.current,
@@ -139,18 +139,18 @@ const ScrollAwareSection = () => {
             },
           });
 
-          // Animate each dot sequentially with slight delay
+     
           dots.forEach((dot: any, index: any) => {
             const progress = index / (dots.length - 1);
             dotTimeline.to(
               dot,
               {
-                fill: "#fc5f2b", // Orange color
+                fill: "#fc5f2b", 
                 duration: 0.1,
                 ease: "none",
               },
               progress * 0.8
-            ); // Slight offset from dashes
+            ); 
           });
 
           ScrollTrigger.create({
@@ -187,8 +187,6 @@ const ScrollAwareSection = () => {
     const handleScroll = () => {
       if (!listRef.current || !containerRef.current) return;
       const items = Array.from(listRef.current.children) as HTMLElement[];
-
-      // Use rotation-aware or fallback
       if (window.innerWidth >= 768) {
         const containerRect = containerRef.current.getBoundingClientRect();
         const containerCenterY = containerRect.top + containerRect.height / 2;
@@ -210,8 +208,7 @@ const ScrollAwareSection = () => {
           if (id) setActiveId(id);
         }
       } else {
-        // For small screens, use scrollTop / simple index
-        const progress = motionProg.get(); // already 0-1
+        const progress = motionProg.get();
         const index = Math.round(progress * (SliderList.length - 1));
         setActiveId(String(SliderList[index].id));
       }
@@ -382,10 +379,9 @@ const Wheel = ({ activeId }: { activeId: string }) => {
     (item) => String(item.id) === activeId
   );
 
-  // Angle offset so active item is at the top
-  const anglePerItem = (180 / (spikeCount - 1)) * 4; // spacing between titles
+  const anglePerItem = (180 / (spikeCount - 1)) * 4; 
   const rotationOffset = -(
-    (activeIndex * anglePerItem ) // 90° = top center in our arc
+    (activeIndex * anglePerItem )
   );
 
   return (
