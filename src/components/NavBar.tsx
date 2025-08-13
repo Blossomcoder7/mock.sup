@@ -92,7 +92,7 @@ const NavBar = () => {
                   <div
                     ref={triggerOpenRef}
                     onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
+                    // onMouseLeave={handleMouseLeave}
                     className="flex group md:flex-1  flex-col lg:flex-row items-center justify-center lg:justify-start space-y-6 lg:space-y-0 lg:space-x-6"
                   >
                     {["What's Included", "Stories", "Our Why", "FAQs"].map(

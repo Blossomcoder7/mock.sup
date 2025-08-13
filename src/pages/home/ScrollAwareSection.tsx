@@ -282,7 +282,7 @@ const ScrollAwareSection = () => {
                 </div>
               </div>
               {/* left side meter el  */}
-              <div className="w-sm h-42 absolute z-3 left-0 top-1/2 -translate-y-1/2  overflow-hidden">
+              <div className="w-sm h-42 absolute z-3 left-0 top-1/2 -translate-y-1/2  overflow-hidden hidden md:block  ">
                 {/* grads  */}
                 <div className="absolute inset-x-0 top-0 left-0 w-full h-1/3 z-4 pointer-events-auto bg-gradient-to-b from-white to-transparent"></div>
                 <div className="absolute inset-x-0 bottom-0 left-0 w-full h-1/3 z-4 pointer-events-auto bg-gradient-to-t from-white to-transparent"></div>
@@ -305,7 +305,7 @@ const ScrollAwareSection = () => {
                           key={`sliding-list-item-${i}`}
                           data-id={a.id}
                           className={clsx(
-                            "w-full h-12 flex justify-start gap-3 items-center",
+                            "w-full h-12 flex justify-start gap-3 items-center"
                           )}
                           animate={{
                             paddingLeft: activeId === String(a.id) ? 20 : 60,
