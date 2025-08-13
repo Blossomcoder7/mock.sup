@@ -232,14 +232,14 @@ const ScrollAwareSection = () => {
       >
         <XSpacing>
           <div className="w-full h-screen min-h-fit bg-white flex relative items-center justify-center">
-            <div className="w-full h-full  relative z-2 flex items-center justify-center">
+            <div className="w-full h-full   relative z-2 flex items-center justify-center">
               {/* svg speedometer el  */}
               <svg
                 ref={speedometerRef}
                 width="90%"
                 height="90%"
                 viewBox="0 0 800 800"
-                className="w-full max-w-3xl h-auto"
+                className="w-full max-w-3xl h-auto "
               >
                 {generateSpeedometerElements()}
               </svg>
@@ -305,6 +305,7 @@ const ScrollAwareSection = () => {
                       <RightArrow />
                     </span>
                   </div>
+
                   <motion.div
                     style={{
                       y: translateY,
@@ -314,16 +315,6 @@ const ScrollAwareSection = () => {
                     className="flex flex-col w-full  items-center h-auto text-black"
                   >
                     {SliderList.map((a, i) => {
-                      const total = SliderList.length;
-                      const isMobile =
-                        typeof window !== "undefined" &&
-                        window.innerWidth < 768;
-
-                      // Arc angles
-                      const angle = isMobile
-                        ? (i / (total - 1)) * 180 - 60 // -60° to 60° arc on mobile
-                        : (i / (total - 1)) * 60 - 30; // -30° to 30° arc on desktop
-
                       return (
                         <motion.div
                           key={`sliding-list-item-${i}`}
@@ -336,14 +327,6 @@ const ScrollAwareSection = () => {
                               ? "opacity-100"
                               : "opacity-40"
                           )}
-                          style={{
-                            transform: isMobile
-                              ? `rotate(${angle}deg) translate(100px)`
-                              : `rotateX(${angle}deg) translateZ(50px)`,
-                            transformOrigin: isMobile
-                              ? "bottom center"
-                              : "center center",
-                          }}
                           animate={{
                             paddingLeft:
                               window.innerWidth < 768
@@ -374,6 +357,9 @@ const ScrollAwareSection = () => {
                   </motion.div>
                 </div>
               </div>
+              <div className="w-full  h-72  block md:hidden absolute z-0 top-0 left-0  overflow-hidden  ">
+                <Wheel activeId={activeId || ""} />
+              </div>
             </div>
           </div>
         </XSpacing>
@@ -383,3 +369,52 @@ const ScrollAwareSection = () => {
 };
 
 export default ScrollAwareSection;
+
+const Wheel = ({ activeId }: { activeId: string }) => {
+  const total = SliderList.length;
+  const spikeCount = total * 4;
+  const radius =150;
+  const centerX = 200;
+  const centerY = 200;
+  const labelRadius = radius + 10;
+
+  const activeIndex = SliderList.findIndex(
+    (item) => String(item.id) === activeId
+  );
+
+  // Angle offset so active item is at the top
+  const anglePerItem = (180 / (spikeCount - 1)) * 4; // spacing between titles
+  const rotationOffset = -(
+    (activeIndex * anglePerItem ) // 90° = top center in our arc
+  );
+
+  return (
+    <div className="relative w-full flex  md:hidden">
+      <svg width="400" height="400" viewBox="0 0 400 200">
+        <g transform={`rotate(${rotationOffset}, ${centerX}, ${centerY})`}>
+          {SliderList.map((item, i) => {
+            const spikeIndex = i * 4;
+            const angle = (spikeIndex / (spikeCount - 1)) * 180 - 90;
+            const rad = (angle * Math.PI) / 180;
+            const x = centerX + (labelRadius + 10) * Math.cos(rad);
+            const y = centerY + (labelRadius + 10) * Math.sin(rad);
+            return (
+              <text
+                key={item.id}
+                x={x}
+                y={y}
+                fontSize="14"
+                fill={String(item.id) === activeId ? "#000" : "#999"}
+                transform={`rotate(${angle}, ${x}, ${y})`}
+                textAnchor="start"
+                dominantBaseline="middle"
+              >
+                {item.title}
+              </text>
+            );
+          })}
+        </g>
+      </svg>
+    </div>
+  );
+};
